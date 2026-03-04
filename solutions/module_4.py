@@ -59,8 +59,51 @@ def m_4_3_4():
     print(res)  # TH3-S3CR3T-K3Y-IS-Y0URS
 
 
+def m_4_4_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/3/3.3.3/index.html"
+        driver.get(url)
+        links = driver.find_elements(By.TAG_NAME, "a")
+        total = 0
+        for link in links:
+            num = link.get_attribute("stormtrooper")
+            try:
+                total += int(num)
+            except:
+                continue
+        driver.find_element(By.ID, "inputNumber").send_keys(str(total))
+        driver.find_element(By.ID, "checkBtn").click()
+        res = driver.find_element(By.ID, "feedbackMessage").text
+    print(res.split()[-1])  # 7H3-D4RK-S1D3-4LW4YS-W1NS
+
+
+def m_4_4_2():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/3/3.3.1/index.html"
+        driver.get(url)
+        parent = driver.find_element(By.ID, "parent_id")
+        child = parent.find_element(By.CLASS_NAME, "child_class")
+        child.click()
+        res = child.get_attribute("password")
+    print(res)  # GET-TH1S-C0D3
+
+
+def m_4_4_3():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/3/3.3.2/index.html"
+        driver.get(url)
+        blocks = driver.find_elements(By.CLASS_NAME, "block")
+        for block in blocks:
+            block.find_element(By.TAG_NAME, "button").click()
+        res = driver.find_element(By.TAG_NAME, "password").text
+    print(res)  # H1DD3N-P4SS-W0RD
+
+
 # your_ip()
 # m_4_3_1()
 # m_4_3_2()
 # m_4_3_3()
 # m_4_3_4()
+# m_4_4_1()
+# m_4_4_2()
+# m_4_4_3()
