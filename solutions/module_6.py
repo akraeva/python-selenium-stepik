@@ -28,5 +28,39 @@ def m_6_1_2():
         elem.screenshot("res_6_1_2.png")  # 2323
 
 
+def m_6_3_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/6/6.3.1/index.html"
+        driver.get(url)
+        token = driver.get_cookie("token_22")
+        res = token["value"]
+    print(res)  # V78lmnOPQ123rstUVW456xyzABC
+
+
+def m_6_3_2():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/6/6.3/index.html"
+        driver.get(url)
+        data = driver.get_cookies()
+        song = next(d["name"] for d in data if "name" in d.keys())
+        driver.find_element(By.ID, "phraseInput").send_keys(song)
+        driver.find_element(By.ID, "checkButton").click()
+        res = driver.find_element(By.ID, "result").text
+    print(res)  # Th3r3-1s-N0-W0rd-M1ss-1n-Pudg35-D1ct10n@ry
+
+
+def m_6_3_3():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/6/6.3.2/index.html"
+        driver.get(url)
+        driver.delete_all_cookies()
+        sleep(3)
+        res = driver.find_element(By.ID, "password").text
+    print(res.split()[-1])  # Рыба-Меч
+
+
 # m_6_1_1()
 # m_6_1_2()
+# m_6_3_1()
+# m_6_3_2()
+# m_6_3_3()
