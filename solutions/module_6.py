@@ -59,8 +59,19 @@ def m_6_3_3():
     print(res.split()[-1])  # Рыба-Меч
 
 
+def m_6_4_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/6/6.3.3/index.html"
+        driver.get(url)
+        driver.add_cookie({"name": "secretKey", "value": "selenium123"})
+        driver.refresh()
+        res = driver.find_element(By.ID, "password").text
+    print(res.split()[-1])  # J4m3s-B0nd-007
+
+
 # m_6_1_1()
 # m_6_1_2()
 # m_6_3_1()
 # m_6_3_2()
 # m_6_3_3()
+# m_6_4_1()
