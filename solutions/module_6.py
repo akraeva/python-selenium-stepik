@@ -69,9 +69,21 @@ def m_6_4_1():
     print(res.split()[-1])  # J4m3s-B0nd-007
 
 
+def m_6_5_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/6/6.5/index.html"
+        driver.get(url)
+        element = driver.find_element(By.ID, "target")
+        driver.execute_script("arguments[0].scrollIntoView();", element)
+        element.click()
+        res = driver.find_element(By.ID, "secret-key").text
+    print(res.split()[-1])  # S1E2L3ENIUM-S1E2C3RET
+
+
 # m_6_1_1()
 # m_6_1_2()
 # m_6_3_1()
 # m_6_3_2()
 # m_6_3_3()
 # m_6_4_1()
+# m_6_5_1()
