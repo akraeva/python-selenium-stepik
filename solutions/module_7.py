@@ -100,6 +100,31 @@ def m_7_3_5():
     print(res)  # UltimateSecret@2025
 
 
+def m_7_4_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/7/7.4.1/index.html"
+        driver.get(url)
+        element = driver.find_element(By.CLASS_NAME, "long-page")
+        ActionChains(driver).move_to_element(element).scroll_by_amount(
+            0, 1200
+        ).perform()
+        sleep(3)
+        data = (
+            driver.find_element(By.CLASS_NAME, "step-wrapper")
+            .find_element(By.CLASS_NAME, "countdown")
+            .text
+        )
+        ActionChains(driver).move_to_element(element).scroll_by_amount(
+            0, 1200
+        ).perform()
+        div = driver.find_elements(By.CLASS_NAME, "step-wrapper")[-1]
+        div.find_element(By.TAG_NAME, "input").send_keys(data.split()[-1])
+        div.find_element(By.TAG_NAME, "button").click()
+        sleep(3)
+        res = driver.find_element(By.ID, "final-key").text
+    print(res.split()[-1])  # S9ECRET-K9EY-9999
+
+
 # m_7_1_1()
 # m_7_2_1()
 # m_7_3_1()
@@ -107,3 +132,4 @@ def m_7_3_5():
 # m_7_3_3()
 # m_7_3_4()
 # m_7_3_5()
+# m_7_4_1()
