@@ -125,6 +125,168 @@ def m_7_4_1():
     print(res.split()[-1])  # S9ECRET-K9EY-9999
 
 
+def m_7_5_1():
+    with get_driver() as driver:
+        url = "http://parsinger.ru/scroll/2/index.html"
+        driver.get(url)
+        res = 0
+        elements = driver.find_elements(By.CLASS_NAME, "item")
+        for e in elements:
+            e.find_element(By.TAG_NAME, "input").click()
+            num = e.find_element(By.TAG_NAME, "span").text
+            if num.isdigit():
+                res += int(num)
+    print(res)  # 13310
+
+
+def m_7_5_2():
+    with get_driver() as driver:
+        url = "http://parsinger.ru/infiniti_scroll_1/"
+        driver.get(url)
+        div = driver.find_element(By.CLASS_NAME, "scroll-container")
+        spans = []
+        res = 0
+        while len(spans) < 100:
+            sleep(1)
+            data = div.find_elements(By.TAG_NAME, "span")
+            for span in data:
+                id = span.get_attribute("id")
+                if id not in spans:
+                    num = span.text
+                    if num.isdigit():
+                        res += int(num)
+                    spans.append(id)
+            div.send_keys(Keys.PAGE_DOWN)
+    print(res)  # 86049950
+
+
+def m_7_5_3():
+    with get_driver() as driver:
+        url = "http://parsinger.ru/infiniti_scroll_2/"
+        driver.get(url)
+        div = driver.find_element(By.CLASS_NAME, "scroll-container")
+        elements = []
+        res = 0
+        while len(elements) < 100:
+            sleep(1)
+            data = div.find_elements(By.TAG_NAME, "p")
+            ActionChains(driver).send_keys(Keys.END).perform()
+            for p in data:
+                id = p.get_attribute("id")
+                if id not in elements:
+                    num = p.text
+                    if num.isdigit():
+                        res += int(num)
+                    elements.append(id)
+            ActionChains(driver).move_to_element(div).click().scroll_by_amount(
+                0, 100
+            ).perform()
+    print(res)  # 499917600
+
+
+def m_7_5_4():
+    def summ(div):
+        elements = []
+        res = 0
+        while len(elements) < 100:
+            data = div.find_elements(By.TAG_NAME, "span")
+            for span in data:
+                id = span.get_attribute("id")
+                if id not in elements:
+                    num = span.text
+                    if num.isdigit():
+                        res += int(num)
+                    elements.append(id)
+            ActionChains(driver).move_to_element(div).click().send_keys(
+                Keys.PAGE_DOWN
+            ).perform()
+        return res
+
+    with get_driver() as driver:
+        url = "http://parsinger.ru/infiniti_scroll_3/"
+        driver.get(url)
+        divs = driver.find_element(By.CLASS_NAME, "main").find_elements(
+            By.XPATH, "./div"
+        )
+        result = 0
+        for div in divs:
+            result += summ(div)
+        print(result)  # 159858750
+
+
+def m_7_5_5():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/5.7/1/index.html"
+        driver.get(url)
+        div = driver.find_element(By.ID, "floating-container")
+        buttons = div.find_elements(By.CLASS_NAME, "clickMe")
+        for b in buttons:
+            driver.execute_script("return arguments[0].scrollIntoView(true);", b)
+            b.click()
+        res = driver.switch_to.alert.text
+    print(res)  # JKf9-034D-DE02-PB2G-QB8Z-81VN-30GK-IO90-UT89
+
+
+def m_7_5_6():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/5.7/5/index.html"
+        driver.get(url)
+        buttons = driver.find_element(By.ID, "main_container").find_elements(
+            By.CLASS_NAME, "timer_button"
+        )
+        for b in buttons:
+            timer = round(float(b.get_attribute("value")) + 1)
+            (ActionChains(driver).click_and_hold(b).pause(timer).release().perform())
+        res = driver.switch_to.alert.text
+    print(res)  # GFL4-ED40-F32F-HJ24-0BXS-235N-PIRE-123VD-123F
+
+
+def m_7_5_7():
+    with get_driver(False) as driver:
+        url = "https://parsinger.ru/selenium/5.7/4/index.html"
+        driver.get(url)
+        main_container = driver.find_element(By.ID, "main_container")
+        cheked = []
+        while len(cheked) < 100:
+            divs = main_container.find_elements(By.CLASS_NAME, "child_container")
+            for line in divs:
+                if line not in cheked:
+                    inboxes = line.find_elements(By.TAG_NAME, "input")
+                    for i in inboxes:
+                        value = i.get_attribute("value")
+                        if int(value) % 2 == 0:
+                            i.click()
+                    cheked.append(line)
+            main_container.send_keys(Keys.PAGE_DOWN)
+        driver.find_element(By.CLASS_NAME, "alert_button").click()
+        res = driver.switch_to.alert.text
+    print(res)  # 5402f04236450f263540jk406504l506
+
+
+def m_7_5_8():
+    with get_driver(False) as driver:
+        url = "https://parsinger.ru/selenium/7/7.5/index.html"
+        driver.get(url)
+        div = driver.find_element(By.ID, "container")
+        data = []
+        data_len = -1
+        res = 0
+        while len(data) != data_len:
+            data_len = len(data)
+            divs = div.find_elements(By.CLASS_NAME, "card")
+            for d in divs:
+                if d not in data:
+                    like = d.find_element(By.CLASS_NAME, "like-btn")
+                    like.click()
+                    num = d.find_element(By.CLASS_NAME, "big-number").text
+                    res += int(num)
+                    data.append(d)
+            div.send_keys(Keys.PAGE_DOWN)
+            sleep(1)
+        input()
+    print(res)  # 500000
+
+
 # m_7_1_1()
 # m_7_2_1()
 # m_7_3_1()
@@ -133,3 +295,11 @@ def m_7_4_1():
 # m_7_3_4()
 # m_7_3_5()
 # m_7_4_1()
+# m_7_5_1()
+# m_7_5_2()
+# m_7_5_3()
+# m_7_5_4()
+# m_7_5_5()
+# m_7_5_6()
+# m_7_5_7()
+# m_7_5_8()
