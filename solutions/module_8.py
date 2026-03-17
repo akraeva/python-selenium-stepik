@@ -44,5 +44,28 @@ def m_8_1_2():
     print(res.split(":")[-1].strip())  # TH3-G4T3S-0F-H3LL-4R3-0P3N
 
 
+def m_8_2_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/8/8.2.1/index.html"
+        driver.get(url)
+        driver.set_window_size(1200, 720)
+        driver.find_element(By.ID, "checkSizeBtn").click()
+        res = driver.find_element(By.ID, "secret").text
+    print(res)  # K2Z6-N9a7-B3Z8-jJ2Q
+
+
+def m_8_2_2():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/8/8.2.2/index.html"
+        driver.get(url)
+        sizes_sum = sum(driver.get_window_size().values())
+        driver.find_element(By.ID, "answer").send_keys(sizes_sum)
+        driver.find_element(By.ID, "checkBtn").click()
+        res = driver.find_element(By.ID, "resultMessage").text
+    print(res.split()[-1])  # W1DTH-GETSIZE2025-HE1GHT
+
+
 # m_8_1_1()
 # m_8_1_2()
+# m_8_2_1()
+# m_8_2_2()
