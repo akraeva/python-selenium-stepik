@@ -65,7 +65,27 @@ def m_8_2_2():
     print(res.split()[-1])  # W1DTH-GETSIZE2025-HE1GHT
 
 
+def m_8_3_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/8/8.3.1/index.html"
+        driver.get(url)
+        driver.find_element(By.ID, "alertButton").click()
+        driver.switch_to.alert.accept()
+        driver.find_element(By.ID, "promptButton").click()
+
+        alert = driver.switch_to.alert
+        alert.send_keys("Alert")
+        alert.accept()
+        driver.find_element(By.ID, "confirmButton").click()
+        driver.switch_to.alert.accept()
+        sleep(1)
+        res = driver.find_element(By.ID, "secretKey").text
+
+    print(res.split()[-1])  # @L3RT-1T-1S-3ASY
+
+
 # m_8_1_1()
 # m_8_1_2()
 # m_8_2_1()
 # m_8_2_2()
+# m_8_3_1()
