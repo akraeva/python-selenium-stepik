@@ -1,4 +1,5 @@
 from time import sleep
+import re
 from selenium.webdriver.common.by import By
 from main import get_driver
 
@@ -84,8 +85,56 @@ def m_8_3_1():
     print(res.split()[-1])  # @L3RT-1T-1S-3ASY
 
 
+def m_8_4_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/8/8.4.1/"
+        driver.get(url)
+        frame = driver.find_element(By.TAG_NAME, "iframe")
+        driver.switch_to.frame(frame)
+        code = driver.page_source
+        res = re.findall(r"\*(.*?)\*", code)
+    print("".join(res))  # FrameMaster
+
+
+def m_8_4_2():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/8/8.4.2/index.html"
+        driver.get(url)
+        done = []
+        res = ""
+        while len(done) < 4:
+            frames = driver.find_elements(By.TAG_NAME, "iframe")
+            for frame in frames:
+                if frame not in done:
+                    driver.switch_to.frame(frame)
+                    if len(done) < 3:
+                        driver.find_element(By.TAG_NAME, "button").click()
+                    elif len(done) == 3:
+                        res = driver.find_element(By.TAG_NAME, "h2").text
+                    done.append(frame)
+                    driver.switch_to.default_content()
+        print(res.split()[-1])  # TH3-M4TR1X-H4S-C0NTR0LL3D-Y0U
+
+
+def m_8_4_3():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/8/8.4.3/index.html"
+        driver.get(url)
+        res = ""
+        for _ in range(4):
+            frame = driver.find_element(By.TAG_NAME, "iframe")
+            driver.switch_to.frame(frame)
+            driver.find_element(By.TAG_NAME, "button").click()
+
+        res = driver.find_element(By.CLASS_NAME, "password-container").text
+    print(res)  # IM-IFRAME-N1NJ4
+
+
 # m_8_1_1()
 # m_8_1_2()
 # m_8_2_1()
 # m_8_2_2()
 # m_8_3_1()
+# m_8_4_1()
+# m_8_4_2()
+# m_8_4_3()
