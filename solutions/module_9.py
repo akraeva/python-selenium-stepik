@@ -15,4 +15,15 @@ def m_9_1_1():
     print(res.split()[-1])  # CL1CK-N0W-0R-N3V3R
 
 
+def m_9_2_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.2.1/index.html"
+        driver.get(url)
+        driver.find_element(By.ID, "startScan").click()
+        WebDriverWait(driver, 30).until(EC.title_is("Access Granted"))
+        res = driver.find_element(By.ID, "passwordValue").text
+    print(res.split()[-1])  # H4CK3R_42
+
+
 # m_9_1_1()
+# m_9_2_1()
