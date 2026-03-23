@@ -25,5 +25,18 @@ def m_9_2_1():
     print(res.split()[-1])  # H4CK3R_42
 
 
+def m_9_3_1():
+    with get_driver() as driver:
+        url = "http://parsinger.ru/selenium/9/9.3.1/index.html"
+        driver.implicitly_wait(7)
+        driver.get(url)
+        driver.find_element(By.ID, "startButton").click()
+        for _ in range(5):
+            driver.find_element(By.ID, "dynamicButton").click()
+        res = driver.find_element(By.ID, "secretPassword").text
+    print(res.split()[-1])  # W41T-4S-L0NG-4S-U-W4NT
+
+
 # m_9_1_1()
 # m_9_2_1()
+# m_9_3_1()
