@@ -94,6 +94,55 @@ def m_9_4_4():
     print(res.split()[-1])  # AbcD123XyZ
 
 
+def m_9_5_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.5.1/index.html"
+        driver.get(url)
+        locator = By.ID, "order-number"
+        element = WebDriverWait(driver, 30).until(
+            EC.visibility_of_element_located(locator)
+        )
+        res = element.text
+    print(res)  # TR07NGM19XTR07NGM19X
+
+
+def m_9_5_2():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.5.2/index.html"
+        driver.get(url)
+        locator = By.ID, "ghost-button"
+        button = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located(locator)
+        )
+        button.click()
+        res = driver.find_element(By.ID, "password-display").text
+    print(res.split()[-1])  # 1234
+
+
+def m_9_5_3():
+    with get_driver(False) as driver:
+        url = "https://parsinger.ru/selenium/9/9.5.3/index.html"
+        driver.get(url)
+        driver.find_element(By.ID, "showProducts").click()
+        locator = (By.CLASS_NAME, "product")
+        elements = WebDriverWait(driver, 30).until(
+            EC.visibility_of_all_elements_located(locator)
+        )
+        summ = 0
+        for e in elements:
+            price = e.find_element(By.CLASS_NAME, "price").text
+            summ += int(price.strip("$"))
+        driver.find_element(By.ID, "sumInput").send_keys(str(summ))
+        driver.find_element(By.ID, "checkSum").click()
+        key_locator = (By.ID, "secretMessage")
+        res = (
+            WebDriverWait(driver, 10)
+            .until(EC.visibility_of_element_located(key_locator))
+            .text
+        )
+    print(res)  # S56P-8B0D-D3B4-PR1V
+
+
 # m_9_1_1()
 # m_9_2_1()
 # m_9_3_1()
@@ -101,3 +150,6 @@ def m_9_4_4():
 # m_9_4_2()
 # m_9_4_3()
 # m_9_4_4()
+# m_9_5_1()
+# m_9_5_2()
+# m_9_5_3()
