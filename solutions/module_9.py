@@ -143,6 +143,79 @@ def m_9_5_3():
     print(res)  # S56P-8B0D-D3B4-PR1V
 
 
+def m_9_6_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.6.1/index.html"
+        driver.get(url)
+        rate = "75.50"
+        element = (By.ID, "usd-rate")
+        WebDriverWait(driver, 60).until(EC.text_to_be_present_in_element(element, rate))
+        res_element = (By.ID, "secret-code")
+        res = (
+            WebDriverWait(driver, 30)
+            .until(EC.visibility_of_element_located(res_element))
+            .text
+        )
+    print(res)  # FOREX_HUNTER_2025
+
+
+def m_9_6_2():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.6.2/index.html"
+        driver.get(url)
+        driver.find_element(By.ID, "ask-jaskier").click()
+        text = "Селениумий"
+        input_box = By.ID, "recipe_field"
+        WebDriverWait(driver, 60).until(
+            EC.text_to_be_present_in_element_value(input_box, text)
+        )
+        res_element = (By.ID, "password")
+        res = (
+            WebDriverWait(driver, 30)
+            .until(EC.visibility_of_element_located(res_element))
+            .text
+        )
+    print(res)  # КаэрМорхен1258
+
+
+def m_9_6_3():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.6.3/index.html"
+        driver.get(url)
+        atr, value = "src", "success"
+        element = By.ID, "main-image"
+        WebDriverWait(driver, 15).until(
+            EC.text_to_be_present_in_element_attribute(element, atr, value)
+        )
+        driver.find_element(By.ID, "main-image").click()
+        res_element = (By.ID, "password")
+        res = (
+            WebDriverWait(driver, 10)
+            .until(EC.visibility_of_element_located(res_element))
+            .text
+        )
+    print(res)  # ARC-R34CT0R-P0W3R
+
+
+def m_9_6_4():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.6.4/index.html"
+        driver.get(url)
+        atr = "confirmed"
+        element = (By.ID, "booking-number")
+        WebDriverWait(driver, 15).until(EC.element_attribute_to_include(element, atr))
+        num = driver.find_element(By.ID, "booking-number").text
+        driver.find_element(By.ID, "booking-input").send_keys(num)
+        driver.find_element(By.ID, "check-button").click()
+        res_element = (By.CLASS_NAME, "password-value")
+        res = (
+            WebDriverWait(driver, 10)
+            .until(EC.visibility_of_element_located(res_element))
+            .text
+        )
+    print(res)  # SELENIUM_WAIT_MASTER
+
+
 # m_9_1_1()
 # m_9_2_1()
 # m_9_3_1()
@@ -153,3 +226,7 @@ def m_9_5_3():
 # m_9_5_1()
 # m_9_5_2()
 # m_9_5_3()
+# m_9_6_1()
+# m_9_6_2()
+# m_9_6_3()
+# m_9_6_4()
