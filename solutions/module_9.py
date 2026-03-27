@@ -1,7 +1,9 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select
 from main import get_driver
+import random
 
 
 def m_9_1_1():
@@ -216,6 +218,55 @@ def m_9_6_4():
     print(res)  # SELENIUM_WAIT_MASTER
 
 
+def m_9_7_1():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.7.1/index.html"
+        driver.get(url)
+        driver.find_element(By.ID, "address").send_keys("Сергиев Посад")
+        payment = Select(driver.find_element(By.ID, "payment"))
+        payment.select_by_index(random.randint(1, 2))
+        driver.find_element(By.ID, "submit-order").click()
+        spinner = (By.ID, "spinner")
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located(spinner))
+        confirm = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "confirm-address"))
+        )
+        confirm.click()
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element(confirm))
+        driver.find_element(By.ID, "get-code").click()
+        res = driver.find_element(By.ID, "result").text
+    print(res)  # 5TR4NG3R-D3M0G0N-001
+
+
+def m_9_7_2():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.7.2/index.html"
+        driver.get(url)
+        driver.find_element(By.CLASS_NAME, "search-box").send_keys("Lorem Ipsum")
+        driver.find_element(By.ID, "search-button").click()
+        old_locator = (By.ID, "old-result")
+        old_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(old_locator)
+        )
+        WebDriverWait(driver, 10).until(EC.staleness_of(old_element))
+        driver.find_element(By.ID, "secret-button").click()
+        res = driver.find_element(By.ID, "result").text
+    print(res)  # S34RCH-K3Y
+
+
+def m_9_7_3():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/9/9.7.3/index.html"
+        driver.get(url)
+        driver.find_element(By.ID, "summonBtn").click()
+        WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(5))
+        driver.find_element(By.ID, "passwordBtn").click()
+        alert = WebDriverWait(driver, 10).until(EC.alert_is_present())
+        res = alert.text
+        alert.accept()
+    print(res.split()[-1])  # X1Y0-A2B3-Z4XC
+
+
 # m_9_1_1()
 # m_9_2_1()
 # m_9_3_1()
@@ -230,3 +281,6 @@ def m_9_6_4():
 # m_9_6_2()
 # m_9_6_3()
 # m_9_6_4()
+# m_9_7_1()
+# m_9_7_2()
+# m_9_7_3()
