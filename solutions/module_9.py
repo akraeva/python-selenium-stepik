@@ -267,6 +267,154 @@ def m_9_7_3():
     print(res.split()[-1])  # X1Y0-A2B3-Z4XC
 
 
+def m_9_8_1():
+    with get_driver() as driver:
+        url = "http://parsinger.ru/expectations/3/index.html"
+        driver.get(url)
+        button_locator = (By.ID, "btn")
+        button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(button_locator)
+        )
+        button.click()
+        WebDriverWait(driver, 30).until(EC.title_is("345FDG3245SFD"))
+        res = driver.find_element(By.ID, "result").text
+    print(res)  # 82934401788.40141
+
+
+def m_9_8_2():
+    with get_driver() as driver:
+        url = "http://parsinger.ru/expectations/4/index.html"
+        driver.get(url)
+        button_locator = (By.ID, "btn")
+        button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(button_locator)
+        )
+        button.click()
+        WebDriverWait(driver, 30).until(EC.title_contains("JK8HQ"))
+        res = driver.title
+    print(res)  # 33GBK-98C3X-K8PKB-JK8HQ-DMXMQ
+
+
+def m_9_8_3():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/expectations/6/index.html"
+        driver.get(url)
+        button_locator = (By.ID, "btn")
+        button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(button_locator)
+        )
+        button.click()
+        element_locator = (By.CLASS_NAME, "BMH21YY")
+        element = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located(element_locator)
+        )
+        res = element.text
+    print(res)  # 688596737976
+
+
+def m_9_8_4():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/5.9/2/index.html"
+        driver.get(url)
+        element_locator = (By.ID, "qQm9y1rk")
+        element = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located(element_locator)
+        )
+        element.click()
+        res = driver.switch_to.alert.text
+    print(res)  # tlprcp6S-kDbhujKo-uh7Rv9f9-irv26iU9-Zt2XZcIm
+
+
+def m_9_8_5():
+    ids_to_find = [
+        "xhkVEkgm",
+        "QCg2vOX7",
+        "8KvuO5ja",
+        "CFoCZ3Ze",
+        "8CiPCnNB",
+        "XuEMunrz",
+        "vmlzQ3gH",
+        "axhUiw2I",
+        "jolHZqD1",
+        "ZM6Ms3tw",
+        "25a2X14r",
+        "aOSMX9tb",
+        "YySk7Ze3",
+        "QQK13iyY",
+        "j7kD7uIR",
+    ]
+    with get_driver(False) as driver:
+        url = "https://parsinger.ru/selenium/5.9/3/index.html"
+        driver.get(url)
+        for element_id in ids_to_find:
+            element = driver.find_element(By.ID, element_id)
+            WebDriverWait(driver, 15).until(EC.visibility_of(element))
+            element.click()
+        res = driver.switch_to.alert.text
+    print(res)  # CFoCZ3Ze-8CiPCnNB-XuEMunrz-vmlzQ3gH-axhUiw2I-QQK13iyY-j7kD7uIR
+
+
+def m_9_8_6():
+    with get_driver(False) as driver:
+        url = "https://parsinger.ru/selenium/5.9/4/index.html"
+        driver.get(url)
+        element = driver.find_element(By.ID, "closeBtn")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(element))
+        element.click()
+        WebDriverWait(driver, 60).until(EC.invisibility_of_element(element))
+        driver.find_element(By.TAG_NAME, "button").click()
+        res = driver.find_element(By.ID, "message").text
+    print(res)  # FS03-R9R3-SVV9-3P05-DSS1-01VI
+
+
+def m_9_8_7():
+    res = []
+    with get_driver(False) as driver:
+        url = "https://parsinger.ru/selenium/5.9/5/index.html"
+        driver.get(url)
+
+        buttons = driver.find_element(By.ID, "main_container").find_elements(
+            By.CLASS_NAME, "box_button"
+        )
+        for button in buttons:
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable(button))
+            button.click()
+            banner = driver.find_element(By.ID, "ad_window")
+            close_btn = banner.find_element(By.ID, "close_ad")
+            WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable(close_btn)
+            ).click()
+            WebDriverWait(driver, 20).until(EC.invisibility_of_element(banner))
+            WebDriverWait(driver, 30).until(lambda d: button.text)
+            res.append(button.text)
+    print("-".join(res))  # F34S-FFS3-56FGH-LKJ0-2E9D-440D-4Q0D-230S-D120
+
+
+def m_9_8_8():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/5.9/6/index.html"
+        driver.get(url)
+        check_box = driver.find_element(By.ID, "myCheckbox")
+        WebDriverWait(driver, 30).until(EC.element_to_be_selected(check_box))
+        driver.find_element(By.TAG_NAME, "button").click()
+        res = driver.find_element(By.ID, "result").text
+    print(res)  # 34D0-3SCV-SCM0-654R-DVM9-42IU
+
+
+def m_9_8_9():
+    with get_driver() as driver:
+        url = "https://parsinger.ru/selenium/5.9/7/index.html"
+        driver.get(url)
+        containers = driver.find_elements(By.CLASS_NAME, "container")
+        for container in containers:
+            check_box = container.find_element(By.TAG_NAME, "input")
+            button = container.find_element(By.TAG_NAME, "button")
+            WebDriverWait(driver, 30).until(EC.element_to_be_selected(check_box))
+            button.click()
+        res = driver.find_element(By.ID, "result").text
+    print(res)  # GFD9-3SV0-3280-WEZC-23UN-Q921-3G5D
+
+
 # m_9_1_1()
 # m_9_2_1()
 # m_9_3_1()
@@ -284,3 +432,12 @@ def m_9_7_3():
 # m_9_7_1()
 # m_9_7_2()
 # m_9_7_3()
+# m_9_8_1()
+# m_9_8_2()
+# m_9_8_3()
+# m_9_8_4()
+# m_9_8_5()
+# m_9_8_6()
+# m_9_8_7()
+# m_9_8_8()
+# m_9_8_9()
