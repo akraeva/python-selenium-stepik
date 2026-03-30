@@ -1,3 +1,5 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
@@ -155,6 +157,25 @@ def m_10_1_9():
     print(res)  # 0000-MAGIC-WORD-0000
 
 
+def m_10_2_1():
+    url = "https://parsinger.ru/selenium/stealth/1/index.html"
+    with get_driver() as driver:
+        driver.get(url)
+        code = driver.find_element(By.ID, "verification-code").text
+
+    options = Options()
+    options.add_argument("--headless=new")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    browser = webdriver.Chrome(options=options)
+    with browser as driver:
+        driver.get(url)
+        driver.find_element(By.ID, "verification-input").send_keys(code)
+        driver.find_element(By.ID, "check-button").click()
+        res_element = driver.find_element(By.ID, "secret")
+        res = WebDriverWait(driver, 20).until(EC.visibility_of(res_element)).text
+    print(res.split()[-1])  # Web1-Driver-Masked-0000
+
+
 # m_10_1_1()
 # m_10_1_2()
 # m_10_1_3()
@@ -164,3 +185,4 @@ def m_10_1_9():
 # m_10_1_7()
 # m_10_1_8()
 # m_10_1_9()
+# m_10_2_1()
