@@ -1,3 +1,6 @@
+import json
+import gzip
+from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -5,6 +8,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
 from main import get_driver
 
 
@@ -176,6 +180,260 @@ def m_10_2_1():
     print(res.split()[-1])  # Web1-Driver-Masked-0000
 
 
+def stepik_selenium_python_m10_cdp():
+    """
+    Скрипт для извлечения JSON-данных с веб-страниц с использованием CDP
+    - Автоматически фильтрует только JSON-ответы
+    - Декодирует данные и преобразует их в Python-объекты
+    - Сохраняет каждый найденный JSON в отдельный файл
+    """
+
+    options = Options()
+    options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+
+    # Функция для фильтрации JSON-ответов
+    def log_filter(log_):
+        return (
+            log_["method"] == "Network.responseReceived"
+            and "json" in log_["params"]["response"]["mimeType"]
+        )
+
+    with webdriver.Chrome(options=options) as browser:
+        browser.get("http://31.130.149.237/json_extraction")
+        sleep(10)
+
+        # Если нужно — можно инициировать события тут, например клик или ввод
+        # browser.find_element(...).click()
+
+        # Получаем "сырые" логи производительности (Performance logs)
+        logs_raw = browser.get_log("performance")
+
+        # Фильтруем и вытаскиваем полезные JSON-сообщения
+        logs = [json.loads(lr["message"])["message"] for lr in logs_raw]
+
+        # Счетчик найденных JSON
+        json_count = 0
+
+        print("\n" + "=" * 80)
+        print("НАЧАЛО СБОРА JSON-ДАННЫХ")
+        print("=" * 80 + "\n")
+
+        # Перебираем отфильтрованные логи (только JSON-ответы)
+        for log in filter(log_filter, logs):
+            try:
+                request_id = log["params"]["requestId"]
+                resp_url = log["params"]["response"]["url"]
+
+                json_count += 1
+                print("\n" + "=" * 80)
+                print(f"JSON #{json_count}")
+                print(f"URL: {resp_url}")
+
+                body = browser.execute_cdp_cmd(
+                    "Network.getResponseBody", {"requestId": request_id}
+                )
+
+                # Попытка сохранить JSON в файл
+                try:
+                    # После этой строки у вас есть готовый Python-объект json_data, с которым можно выполнять любые операции.
+                    json_data = json.loads(body["body"])
+
+                    # Сохраняем JSON напрямую в директории скрипта
+                    filename = f"json_{json_count}.json"
+                    with open(filename, "w", encoding="utf-8") as f:
+                        json.dump(json_data, f, indent=4, ensure_ascii=False)
+                    print(f"Сохранено в файл: {filename}")
+                except Exception as e:
+                    print(f"Ошибка при сохранении JSON: {e}")
+                    # Если не удалось обработать как JSON, сохраняем текст как есть
+                    fallback_filename = f"raw_response_{json_count}.txt"
+                    with open(fallback_filename, "w", encoding="utf-8") as f:
+                        f.write(body["body"])
+                    print(f"Сохранен необработанный ответ в: {fallback_filename}")
+
+            except WebDriverException:
+                print("Нет Body для данного запроса")
+                continue
+
+
+def stepik_selenium_python_m10_wire():
+    """
+    Скрипт сохраняет найденные JSON-ответы в отдельные файлы (json_1.json, json_2.json, ...).
+    Используется selenium-wire для перехвата сетевых запросов, поддерживается обработка gzip.
+    """
+    URL = "http://31.130.149.237/json_extraction"
+    options = webdriver.ChromeOptions()
+    # Отключаем автоматическое обновление HTTP до HTTPS т.к. тренажер работает на 80 порту HTTP
+    options.add_argument("--disable-features=HttpsUpgrades")
+
+    with webdriver.Chrome(options=options) as browser:
+        # Открываем страницу
+        browser.get(URL)
+        # Ждем загрузки страницы и AJAX-запросов
+        sleep(5)
+
+        # Если нужно — можно инициировать события тут, например клик или ввод
+        # browser.find_element(...).click()
+
+        json_count = 0  # Счетчик найденных JSON и отсеиваем по длине
+        # Перебираем все запросы
+        for request in browser.requests:
+            # Проверяем, что есть ответ и это JSON с длинной более 50 байтов
+            if (
+                request.response
+                and "application/json"
+                in request.response.headers.get("Content-Type", "")
+                and len(request.response.body) > 50
+            ):
+                try:
+                    # Получаем тело ответа
+                    body = request.response.body  # Получаем сырые данные ответа
+
+                    # Проверяем, является ли ответ сжатым (gzip)
+                    if request.response.headers.get("Content-Encoding") == "gzip":
+                        body = gzip.decompress(body)  # Распаковываем gzip сжатие
+
+                    # Декодируем ответ в UTF-8
+                    decoded_body = body.decode("utf-8", errors="replace")
+
+                    # Парсим JSON
+                    # После этой строки у вас есть полноценный Python-объект json_data, с которым вы можете выполнять любые операции
+                    json_data = json.loads(
+                        decoded_body
+                    )  # Преобразуем текст в объект Python
+
+                    # Форматируем JSON для сохранения
+                    formatted_json = json.dumps(json_data, indent=4, ensure_ascii=False)
+                    # Увеличиваем счетчик и сохраняем JSON
+                    json_count += 1
+                    # Выводим информацию о найденном JSON
+                    print("\n" + "=" * 80)  # Печатаем разделитель
+                    print(f"URL: {request.url}")  # Печатаем URL запроса
+                    # Сохраняем JSON в файл
+                    with open(
+                        f"json_{json_count}.json", "w", encoding="utf-8"
+                    ) as f:  # Открываем файл для записи
+                        f.write(formatted_json)  # Записываем JSON в файл
+                    print(f"Сохранен в json_{json_count}.json")  # Печатаем имя файла
+                except Exception as e:  # Обрабатываем возможные ошибки
+                    print(
+                        f"Ошибка при обработке ответа: {str(e)}"
+                    )  # Печатаем сообщение об ошибке
+
+        # Выводим итоговую статистику
+        print(
+            f"\nВсего найдено и сохранено JSON: {json_count}"
+        )  # Печатаем общее количество найденных JSON
+
+
+def m_10_3_1():
+    options = Options()
+    options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+
+    def log_filter(log_):
+        return (
+            log_["method"] == "Network.responseReceived"
+            and "json" in log_["params"]["response"]["mimeType"]
+        )
+
+    with webdriver.Chrome(options=options) as driver:
+        driver.get("http://31.130.149.237/json_extraction")
+        button_locator = (By.ID, "contactsButton")
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(button_locator))
+        driver.find_element(*button_locator).click()
+        modal = driver.find_element(By.ID, "contactsModal")
+        WebDriverWait(driver, 10).until(EC.visibility_of(modal))
+        logs_raw = driver.get_log("performance")
+        logs = [json.loads(lr["message"])["message"] for lr in logs_raw]
+        res = ""
+        for log in filter(log_filter, logs):
+            try:
+                request_id = log["params"]["requestId"]
+                body = driver.execute_cdp_cmd(
+                    "Network.getResponseBody", {"requestId": request_id}
+                )
+                json_data = json.loads(body["body"])
+                if "stores" in json_data.keys():
+                    for store in json_data["stores"]:
+                        if store["id"] == 2:
+                            res = store["coordinates"]["lng"]
+                            break
+
+            except WebDriverException:
+                continue
+    print(res)  # 30.332
+
+
+def m_10_3_2():
+    options = Options()
+    options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+
+    def log_filter(log_):
+        return (
+            log_["method"] == "Network.responseReceived"
+            and "json" in log_["params"]["response"]["mimeType"]
+        )
+
+    with webdriver.Chrome(options=options) as driver:
+        driver.get("http://31.130.149.237/json_extraction")
+        book_card = (By.CLASS_NAME, "book-card")
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(book_card))
+        logs_raw = driver.get_log("performance")
+        logs = [json.loads(lr["message"])["message"] for lr in logs_raw]
+        res = 0
+        for log in filter(log_filter, logs):
+            try:
+                request_id = log["params"]["requestId"]
+                body = driver.execute_cdp_cmd(
+                    "Network.getResponseBody", {"requestId": request_id}
+                )
+                json_data = json.loads(body["body"])
+                books = json_data["data"]
+                for book in books:
+                    data = (book["id"], book["year"], book["price"])
+                    res += sum(map(int, data))
+            except WebDriverException:
+                continue
+    print(res)  # 16643
+
+
+def m_10_3_3():
+    options = Options()
+    options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+
+    def log_filter(log_):
+        return (
+            log_["method"] == "Network.responseReceived"
+            and "json" in log_["params"]["response"]["mimeType"]
+        )
+
+    with webdriver.Chrome(options=options) as driver:
+        driver.get("http://31.130.149.237/json_extraction")
+        book_card = (By.CLASS_NAME, "book-card")
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(book_card))
+        stop_scroll = driver.find_element(By.ID, "endMessage")
+        while not stop_scroll.is_displayed():
+            driver.execute_script("window.scrollBy(0, 300);")
+
+        logs_raw = driver.get_log("performance")
+        logs = [json.loads(lr["message"])["message"] for lr in logs_raw]
+        res = []
+        for log in filter(log_filter, logs):
+            try:
+                request_id = log["params"]["requestId"]
+                body = driver.execute_cdp_cmd(
+                    "Network.getResponseBody", {"requestId": request_id}
+                )
+                json_data = json.loads(body["body"])
+                books = json_data["data"]
+                for book in books:
+                    if "password" in book.keys():
+                        res.append(book["password"])
+            except WebDriverException:
+                continue
+    print("-".join(res))  # JSON-EXTRACTION-POWER-SUM-BOOKS-PASS
+
+
 # m_10_1_1()
 # m_10_1_2()
 # m_10_1_3()
@@ -186,3 +444,6 @@ def m_10_2_1():
 # m_10_1_8()
 # m_10_1_9()
 # m_10_2_1()
+# m_10_3_1()
+# m_10_3_2()
+# m_10_3_3()
